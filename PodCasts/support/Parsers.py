@@ -17,14 +17,15 @@ class RSSParser (xml.sax.handler.ContentHandler):
   MediaSize = ""
   MediaType = ""
 
-  Items = []
+  Items = None
 
   def __init__(self, url):
-    file = urllib.urlopen(url)
-    
-    xml.sax.parse(file, self)
-
+    self.Items = []
     self.Link = url.lower().strip()
+    f = urllib.urlopen(self.Link)
+    xml.sax.parse(f, self)
+    f.close()
+
     
   def startElement(self, RawName, attrs):
     Name = RawName.lower()
@@ -104,8 +105,8 @@ class Item(xml.sax.handler.ContentHandler):
     elif Name == "guid":
       self.GUID = self.Content
 
-  def close(self):
-    print(self.__dict__) 
+  def __repr__(self):
+    return str(self.__dict__)
 
 def rfc822toDateTime(content):
   return datetime.datetime(*email.utils.parsedate(content)[:7])

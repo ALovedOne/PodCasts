@@ -1,6 +1,7 @@
 var com = com || {}
 com.frz = com.frz || {}
 com.frz.podcast = {}
+com.frz.podcast.vars = {}
 
 com.frz.podcast.get_item = function(div, item_name) {
   return $(div).parents("." + item_name);
@@ -11,25 +12,39 @@ com.frz.podcast.item_id = function(div, item_name) {
   return item[0].getAttribute(item_name + "_id");
 }
 
-com.frz.podcast.play_url = function(url) {
-  if(url == "") {
-    return;
-  }
-  audio = $("#audio-element")[0];
-  audio.src = url;
-  
-  Dajaxice.PodCasts.loadInstance(PodCasts_play_url_cb, data);
+com.frz.podcast.play = function(evnt) {
+  var args = {};
+  args['show_id'] = com.frz.podcast.item_id(evnt.target,'show');
 
-  audio.play();
-  setInterval(podcast_update, 60*1000);
-}
+  Dajaxice.PodCasts.loadInstance(function(data) {
+    var audio = $("#audio-element")[0];
+    audio.src = data['url'];
+    audio.startTime = 60;
+    com.frz.podcast.vars.inst_id = data['inst_id'];
 
-com.frz.podcast.podcast_pause = function() {
-
+    audio.addEventListener('canplaythrough', function() {
+      audio.currentTime = data['position'];
+      audio.play();
+      com.frz.podcast.vars.interval = setInterval(com.frz.podcast.podcast_update, 1000*60*2);
+    });
+    audio.addEventListener('pause', com.frz.podcast.podcast_update);
+  }, args);
 }
 
 com.frz.podcast.podcast_update = function() {
+  var audio = $("#audio-element")[0];
+  var args = {};
 
+  if (audio.paused) {
+    clearInterval(com.frz.podcast.vars.interval);
+    com.frz.podcast.vars.interval = 0;
+  }
+
+  args['inst_id'] = com.frz.podcast.vars.inst_id;
+  args['curr_pos'] = audio.currentTime;
+
+  Dajaxice.PodCasts.updateInstance(function(data) {
+    } ,args);
 }
 
 com.frz.podcast.update_favorite = function(evnt){
@@ -54,5 +69,9 @@ $(document).ready(function() {
   elements = $(".update_favorite");
   for (i = 0; i < elements.length; i++) {
     elements[i].onclick = com.frz.podcast.update_favorite;
+  }
+  elements = $(".play-show");
+  for (i = 0; i < elements.length; i++) {
+    elements[i].onclick = com.frz.podcast.play;
   }
 })

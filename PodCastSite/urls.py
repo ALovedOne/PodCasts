@@ -16,5 +16,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^PodCasts/', include('PodCasts.urls')),
     url(dajaxice_config.dajaxice_url, include('dajaxice.urls')),
+    (r'^accounts/login/$', 'django.contrib.auth.views.login'),
 )
 

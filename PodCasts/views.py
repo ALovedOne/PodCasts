@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import *
 from django.core.urlresolvers import reverse
 from django.db import IntegrityError
@@ -39,9 +40,10 @@ def PodCastDetails(request, pk):
                 'user': request.user }
     return render(request, 'PodCasts/PodCast.html', context)
  
+@login_required
 def UserFavorites(request):
     if not request.user.is_authenticated():
-        return HttpResponseRedirect("")
+        return redirect_to_login(PodCasts.view.UserFavorites)
     user_favorites = Favorite.objects.filter(User = request.user.id)
     context = { 'favorites' : user_favorites,
                 'user': request.user }

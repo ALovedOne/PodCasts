@@ -45,11 +45,10 @@ class PodCast(models.Model):
         return dateDelta.seconds + dateDelta.days*60*60*24
 
     def updateIfReq(self):
-        if self.timeSinceLastUpdate() > 60*60:
+#        if self.timeSinceLastUpdate() > 60*60:
             self.update()
 
     def update(self, FirstLoad = False):
-        print self.Link
         parser = RSSParser(self.Link)
 
         if FirstLoad:
@@ -59,8 +58,6 @@ class PodCast(models.Model):
             self.save()
 
         for i in parser.Items:
-            print i.Title
-            print "  " + i.MediaURL
             if i.MediaSize == "":
                 MediaSize = 0
             else:

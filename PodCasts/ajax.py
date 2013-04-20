@@ -52,8 +52,25 @@ def loadInstance(request, *args, **kwargs):
   if not request.user.is_authenticated():
     ret['needs_auth'] = True
   else:
-    
+    show_id = kwargs['show_id']
+    user_id = request.user.id
+    (inst, created) = Instance.objects.get_or_create(Show_id=show_id,User_id=user_id)
+    ret['position'] = inst.Position
+    ret['done']    = inst.Done
+    ret['url']     = inst.Show.Link
+    ret['inst_id'] = inst.id
+    if created:
+      inst.save()
   return json.dumps(ret);
 
+@dajaxice_register
 def updateInstance(request, *args, **kwargs):
-  return ""
+  inst_id = kwargs['inst_id']
+  user_id = request.user.id
+  inst = Instance.objects.get(id = inst_id, User_id = user_id)
+  if not request.user.is_authenticated():
+    ret['needs_auth'] = True 
+  elif inst:
+    inst.Position = kwargs['curr_pos'] 
+    inst.save()
+  return json.dumps(kwargs);

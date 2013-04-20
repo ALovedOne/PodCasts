@@ -5,9 +5,22 @@
 }
 
 .content {
-  width: 895px;
-  display: inline-block;
+  position: relative;
 }
+
+.left-content {
+  width: 900px;
+  display: inline-block;
+  position: absolute;
+}
+
+.right-content {
+  display: inline-block;
+  position: absolute;
+  width: 300px;
+  left: 900px;
+}
+
 
 .title-div {
   padding-bottom: 15px;
@@ -27,8 +40,6 @@
 }
 
 .item-description {
-  padding-top: 5px;
-  
 }
 
 .fav-img {
@@ -37,14 +48,14 @@
 }
 
 .item {
-  padding: 5px 25px;
+  padding-bottom: 5px;
   position: relative;
 }
 
 .item-buttons {
   display: inline-block;
   vertical-align: top;
-  padding-top: 6px;
+  position: absolute;
 }
 
 .img-icon{
@@ -76,19 +87,13 @@
 
 
 .item-content {
-  display: inline-block;
   width: 700px;
   vertical-align: top;
-  padding: 5px;
+  position: relative;
+  left: 20px;
 }
 
 .clickable {
-  border-radius: 5px;   
-/*  background-image: linear-gradient(top, rgba(239,239,239,.5) 20%, rgba(255,255,255,.5) 61%, rgba(239,239,239,.5) 80%);  
-  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0.2, rgba(220,220,220,0.5)),color-stop(0.61, rgba(255,255,255,.5)),color-stop(0.8, rgba(220,220,220,0.5)));
-  */
-  background: -webkit-linear-gradient(top, rgba(119,119,119,.5) 0%, rgba(93,93,93,0.5) 100%);
-  box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
 }
 
 .clickable:hover {
@@ -100,7 +105,6 @@
   font-size: 112%;
   font-weight: bold;
   display: inline;
-  padding: 5px;
 }
 
 .item-subtitle {
@@ -110,12 +114,6 @@
 
 .item-body {
   padding: 5px;
-}
-
-.right-content {
-  display: inline-block;
-  width: 300px;
-  margin-bottom: auto;
 }
 
 .header {
@@ -141,12 +139,7 @@
 
 .nav ul {
     background: #efefef; 
-    background: linear-gradient(top, #efefef 0%, #bbbbbb 100%);  
-    background: -moz-linear-gradient(top, #efefef 0%, #bbbbbb 100%); 
-    background: -webkit-linear-gradient(top, #efefef 0%,#bbbbbb 100%); 
-    box-shadow: 0px 0px 9px rgba(0,0,0,0.15);
     padding: 0 5px;
-    border-radius: 10px;  
     list-style: none;
     position: relative;
     display: inline-table;

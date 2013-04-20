@@ -9,9 +9,12 @@
     </div>
     {% for show in shows %}
     <div class="item show" show_id={{show.id}} >
-        <div class="item-title clickable">{{ show.Title }}</div>
+      <div class="item-buttons"></div>
+      <div class="item-content">
+        <div class="play-show item-title clickable">{{ show.Title }}</div>
         <div class="item-subtitle">{{ show.PubDate }}</div>
         <div class="item-description">{{ show.Description|safe }}</div>
+      </div>
     </div>
     {% endfor %}
 </div>
