@@ -1,0 +1,23 @@
+{% extends "PodCasts/frame.html" %}
+{% load staticfiles %}
+
+{% block content %}
+{% if favorites %}
+    <div>
+    {% for favorite in favorites %}
+        <div class="item"> 
+            <div class="item-buttons">
+            </div>
+            <div class="item-content">
+                <div class="item-title clickable" onclick="window.location='{% url 'PodCasts.views.PodCastDetails' favorite.Podcast.id %}'">
+                    {{ favorite.Podcast.Title }}
+                </div>
+                <div>{{ favorite.Podcast.Description }}</div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No favorites yet.</p>
+{% endif %}
+{% endblock %}

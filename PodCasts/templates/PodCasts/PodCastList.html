@@ -1,0 +1,29 @@
+{% extends "PodCasts/frame.html" %}
+{% load staticfiles %}
+
+{% block content %}
+{% if new_podcast_list %}
+    <div>
+    {% for podcast in new_podcast_list %}
+        {% if podcast.isFavorite %}
+        <div class="item podcast favorite" podcast_id={{podcast.id}} > 
+        {% else %}
+        <div class="item podcast" podcast_id={{podcast.id}} > 
+        {% endif %}
+            <div class="item-buttons">
+              <div class="img-icon-clickable update_favorite">
+                <img class="img-icon icon-favorite" src={% static "PodCasts/favorite.png" %}></img>
+                <img class="img-icon icon-fav-blank" src={% static "PodCasts/favorite-blank.png" %}></img>
+              </div>
+            </div>
+            <div class="item-content">
+                <div class="item-title clickable" onclick="window.location='{% url 'PodCasts.views.PodCastDetails' podcast.id %}'">{{ podcast.Title }}</div>
+                <div class="item-body">{{ podcast.Description }}</div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No podcasts are available.</p>
+{% endif %}
+{% endblock %}

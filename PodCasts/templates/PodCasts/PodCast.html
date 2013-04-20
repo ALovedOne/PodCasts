@@ -1,0 +1,19 @@
+{% extends "PodCasts/frame.html" %}
+
+{% block content %}
+<div>
+    <div class="title-div">
+        <div class="title">{{ podcast.Title }}</div>
+        <div class="informative">Last retrived: {{ podcast.LastRetrived }}</div>
+        <div class="description">{{ podcast.Description }}</div>
+    </div>
+    {% for show in shows %}
+    <div class="item show" show_id={{show.id}} >
+        <div class="item-title clickable">{{ show.Title }}</div>
+        <div class="item-subtitle">{{ show.PubDate }}</div>
+        <div class="item-description">{{ show.Description|safe }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+

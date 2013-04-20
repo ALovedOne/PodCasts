@@ -1,0 +1,9 @@
+<form action={% url 'PodCasts.views.create' %} method="post">
+    {% csrf_token %}
+    <label for="PODCAST-URL">Podcast name:</label>
+    <input type=text name="podcast_url" id="PODCAST-URL" />
+    <input type=submit value="Go" />
+</form>
+<audio controls id="audio-element">
+
+</audio>
