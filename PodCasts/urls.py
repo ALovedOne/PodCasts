@@ -1,4 +1,4 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import patterns, include, url
 from django.views.generic import DetailView, ListView
 
 from PodCasts import views
@@ -15,4 +15,5 @@ urlpatterns = patterns('',
   url(r'^(?P<pk>\d+)/$', views.PodCastDetails, name='detail'),
   url(r'^create/$',      views.create,         name='create'),
   url(r'^favorite/$',    views.UserFavorites,  name='favorites'),
+  url(r'^api/',          include('PodCasts.api.urls')),
 )

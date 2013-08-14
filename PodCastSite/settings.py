@@ -61,7 +61,7 @@ WSGI_APPLICATION = 'PodCastSite.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'USER': 'mike',
+        'USER': 'podcastsite',
         'HOST': 'localhost',
         'NAME': 'PodCast',
     }
@@ -110,3 +110,5 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'dajaxice.finders.DajaxiceFinder',
 )
+
+PISTON_DISPLAY_ERRORS = True

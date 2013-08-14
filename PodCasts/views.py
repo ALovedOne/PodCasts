@@ -12,7 +12,6 @@ from PodCasts.models import PodCast, Show, Favorite
 def create(request):
     p = None
     podcast_url = request.POST['podcast_url']
-    print podcast_url
     podcast_url = podcast_url.lower().strip()
     (p, created) = PodCast.objects.get_or_create(Link=podcast_url)
     if created:
@@ -23,7 +22,7 @@ def create(request):
     return HttpResponseRedirect(reverse('detail', args=(p.id,)))
 
 def PodCastList(request):
-    podCasts = PodCast.objects.all()[:5]
+    podCasts = PodCast.objects.all()
     if request.user.is_authenticated():
         for i in podCasts:
             i.currentUser = request.user
@@ -34,7 +33,7 @@ def PodCastList(request):
 def PodCastDetails(request, pk):
     podcast = get_object_or_404(PodCast, pk=pk)
     podcast.updateIfReq()
-    shows = Show.objects.filter(Podcast = podcast)
+    shows = Show.objects.filter(Podcast = podcast).order_by('-PubDate')
     context = { 'podcast' : podcast,
                 'shows' : shows,
                 'user': request.user }

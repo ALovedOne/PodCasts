@@ -2,10 +2,13 @@
 
 {% block content %}
 <div>
-    <div class="title-div">
-        <div class="title">{{ podcast.Title }}</div>
-        <div class="informative">Last retrived: {{ podcast.LastRetrived }}</div>
-        <div class="description">{{ podcast.Description }}</div>
+    <div>
+        <img class="title-image" src={{ podcast.ImageLink }} height='90px' width='90px'></img>
+        <div class="inline">
+            <div class="title">{{ podcast.Title }}</div>
+            <div class="informative">Last retrived: {{ podcast.LastRetrived }}</div>
+            <div class="description">{{ podcast.Description }}</div>
+        </div>
     </div>
     {% for show in shows %}
     <div class="item show" show_id={{show.id}} >

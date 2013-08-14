@@ -16,11 +16,14 @@ class RSSParser (xml.sax.handler.ContentHandler):
   MediaURL = ""
   MediaSize = ""
   MediaType = ""
+  ImageLink = ""
 
   Items = None
+  Elements = None
 
   def __init__(self, url):
     self.Items = []
+    self.Elements = []
     self.Link = url.lower().strip()
     f = urllib.urlopen(self.Link)
     xml.sax.parse(f, self)
@@ -29,11 +32,16 @@ class RSSParser (xml.sax.handler.ContentHandler):
     
   def startElement(self, RawName, attrs):
     Name = RawName.lower()
+    self.Elements.append(Name)
     if Name == "item":
       self.currentSubHandler = Item()
       self.Items.append(self.currentSubHandler)
+      self.Content = ""
     elif self.currentSubHandler != None:
       self.currentSubHandler.startElement(RawName, attrs)
+    elif Name == "itunes:image":
+      if self.ImageLink == "":
+        self.ImageLink = attrs.getValue("href")
     else:
       self.Content = ""
 
@@ -45,6 +53,7 @@ class RSSParser (xml.sax.handler.ContentHandler):
 
   def endElement(self, RawName):
     Name = RawName.lower()
+    self.Elements.pop()
     if Name=="item":
       self.currentSubHandler = None
     elif self.currentSubHandler != None:
@@ -60,6 +69,9 @@ class RSSParser (xml.sax.handler.ContentHandler):
       #self.Link = self.Content
     elif Name == "guid":
       self.GUID = self.Content
+    elif Name=="url" and self.Elements[-1]=="image":
+      if self.ImageLink == "":
+        self.ImageLink = self.Content
 
   def __repr__(self):
     return repr(self.__dict__)

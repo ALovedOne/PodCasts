@@ -28,6 +28,7 @@ com.frz.podcast.play = function(evnt) {
       com.frz.podcast.vars.interval = setInterval(com.frz.podcast.podcast_update, 1000*60*2);
     });
     audio.addEventListener('pause', com.frz.podcast.podcast_update);
+    audio.addEventListener('ended', com.frz.podcast.podcast_done);
   }, args);
 }
 
@@ -45,6 +46,10 @@ com.frz.podcast.podcast_update = function() {
 
   Dajaxice.PodCasts.updateInstance(function(data) {
     } ,args);
+}
+
+com.frz.podcast.podcast_done = function() {
+
 }
 
 com.frz.podcast.update_favorite = function(evnt){

@@ -53,11 +53,13 @@ def loadInstance(request, *args, **kwargs):
     ret['needs_auth'] = True
   else:
     show_id = kwargs['show_id']
+    show = Show.objects.get(id=show_id)
     user_id = request.user.id
-    (inst, created) = Instance.objects.get_or_create(Show_id=show_id,User_id=user_id)
+    podcast_id = show.Podcast_id
+    (inst, created) = Instance.objects.get_or_create(Show_id=show_id,User_id=user_id, PodCast_id=podcast_id)
     ret['position'] = inst.Position
     ret['done']    = inst.Done
-    ret['url']     = inst.Show.Link
+    ret['url']     = inst.Show.MediaURL
     ret['inst_id'] = inst.id
     if created:
       inst.save()

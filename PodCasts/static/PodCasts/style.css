@@ -21,6 +21,13 @@
   left: 900px;
 }
 
+.title-image {
+  display: inline;
+}
+
+.inline {
+  display: inline;
+}
 
 .title-div {
   padding-bottom: 15px;

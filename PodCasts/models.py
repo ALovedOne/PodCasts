@@ -11,6 +11,7 @@ import pytz
 class PodCast(models.Model):
     Title = models.CharField(max_length=200)
     Link  = models.URLField(unique=True)
+    ImageLink = models.URLField(blank=True, default="")
     Description = models.TextField()
     LastRetrived = models.DateTimeField(blank=True,null=True)
     
@@ -45,17 +46,17 @@ class PodCast(models.Model):
         return dateDelta.seconds + dateDelta.days*60*60*24
 
     def updateIfReq(self):
-#        if self.timeSinceLastUpdate() > 60*60:
+        if self.timeSinceLastUpdate() > 60*60:
             self.update()
 
-    def update(self, FirstLoad = False):
+    def update(self, FirstLoad = True):
         parser = RSSParser(self.Link)
 
-        if FirstLoad:
-            self.Title = parser.Title
-            self.LastRetrived = datetime.datetime.now(pytz.utc)
-            self.Description = parser.Description
-            self.save()
+        self.Title = parser.Title
+        self.LastRetrived = datetime.datetime.now(pytz.utc)
+        self.Description = parser.Description
+        self.ImageLink = parser.ImageLink
+        self.save()
 
         for i in parser.Items:
             if i.MediaSize == "":
@@ -87,6 +88,13 @@ class Show(models.Model):
     Description = models.TextField()
     PubDate = models.DateField(null=True)
 
+    def userInstance(self, request):
+      try:
+        return Instance.objects.get(Show_id = self.id, User_id = request.user.id)
+      except Instance.DoesNotExist as e:
+        return None
+      
+
     def __unicode__(self):
         return self.Title
 
@@ -97,5 +105,6 @@ class Favorite(models.Model):
 class Instance(models.Model):
     User = models.ForeignKey(User)
     Show = models.ForeignKey(Show)
+    PodCast = models.ForeignKey(PodCast)
     Position = models.IntegerField(default=0)
     Done = models.BooleanField(default=False)
