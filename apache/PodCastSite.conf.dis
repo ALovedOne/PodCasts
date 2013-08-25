@@ -1,0 +1,1 @@
+WSGIScriptAlias / /home/mike/PodCasts/apache/django.wsgi

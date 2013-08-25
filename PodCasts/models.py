@@ -14,7 +14,8 @@ class PodCast(models.Model):
     ImageLink = models.URLField(blank=True, default="")
     Description = models.TextField()
     LastRetrived = models.DateTimeField(blank=True,null=True)
-    
+    FavoritingUsers = models.ManyToManyField(User, through = 'Favorite')
+
     _isFavorite = False
     _user = None
 
@@ -78,7 +79,7 @@ class PodCast(models.Model):
         self.save()
 
 class Show(models.Model):
-    Podcast = models.ForeignKey(PodCast)
+    Podcast = models.ForeignKey(PodCast,related_name = 'shows')
     Title = models.CharField(max_length=200)
     GUID  = models.CharField(max_length=200,unique=True)
     Link  = models.CharField(max_length=200)
@@ -93,13 +94,25 @@ class Show(models.Model):
         return Instance.objects.get(Show_id = self.id, User_id = request.user.id)
       except Instance.DoesNotExist as e:
         return None
+
+    def getUserShows(User_id):
+      return Show.objects.raw('''
+SELECT PodCasts_show.*, UserInsts.Position as userPosition, UserInsts.Done as userDone
+FROM PodCasts_show
+LEFT JOIN (
+  SELECT *
+  FROM PodCasts_instance
+  WHERE PodCasts_instance.User_id = 1
+) AS UserInsts
+ON PodCasts_show.id = UserInsts.Show_id
+          ''')
       
 
     def __unicode__(self):
         return self.Title
 
 class Favorite(models.Model):
-    User = models.ForeignKey(User)
+    User = models.ForeignKey(User,related_name='favorites')
     Podcast = models.ForeignKey(PodCast)
     
 class Instance(models.Model):

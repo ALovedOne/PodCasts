@@ -37,7 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social_auth',
     'dajaxice',
+    'rest_framework',
     'PodCasts',
 )
 
@@ -112,3 +114,43 @@ STATICFILES_FINDERS = (
 )
 
 PISTON_DISPLAY_ERRORS = True
+
+REST_FRAMEWORK = {
+    # Use hyperlinked styles by default.
+    # Only used if the `serializer_class` attribute is not set on a view.
+    'DEFAULT_MODEL_SERIALIZER_CLASS':
+      'rest_framework.serializers.HyperlinkedModelSerializer',
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': 
+      [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+      ]
+}
+
+
+AUTHENTICATION_BACKENDS = (
+#    'social_auth.backends.twitter.TwitterBackend',
+#    'social_auth.backends.facebook.FacebookBackend',
+    'social_auth.backends.google.GoogleOAuthBackend',
+    'social_auth.backends.google.GoogleOAuth2Backend',
+    'social_auth.backends.google.GoogleBackend',
+#    'social_auth.backends.yahoo.YahooBackend',
+#    'social_auth.backends.browserid.BrowserIDBackend',
+#    'social_auth.backends.contrib.linkedin.LinkedinBackend',
+#    'social_auth.backends.contrib.disqus.DisqusBackend',
+#    'social_auth.backends.contrib.livejournal.LiveJournalBackend',
+#    'social_auth.backends.contrib.orkut.OrkutBackend',
+#    'social_auth.backends.contrib.foursquare.FoursquareBackend',
+#    'social_auth.backends.contrib.github.GithubBackend',
+#    'social_auth.backends.contrib.vk.VKOAuth2Backend',
+#    'social_auth.backends.contrib.live.LiveBackend',
+#    'social_auth.backends.contrib.skyrock.SkyrockBackend',
+#    'social_auth.backends.contrib.yahoo.YahooOAuthBackend',
+#    'social_auth.backends.contrib.readability.ReadabilityBackend',
+#    'social_auth.backends.contrib.fedora.FedoraBackend',
+#    'social_auth.backends.OpenIDBackend',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+
