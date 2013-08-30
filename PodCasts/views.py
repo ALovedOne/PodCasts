@@ -22,10 +22,10 @@ def create(request):
     return HttpResponseRedirect(reverse('detail', args=(p.id,)))
 
 def PodCastList(request):
-    podCasts = PodCast.objects.all()
     if request.user.is_authenticated():
-        for i in podCasts:
-            i.currentUser = request.user
+      podCasts = PodCast.objects.all(request.user.id)
+    else:
+      podCasts = PodCast.objects.all()
     context = {'new_podcast_list': podCasts,
                'user': request.user }
     return render(request, 'PodCasts/PodCastList.html', context)
@@ -33,10 +33,18 @@ def PodCastList(request):
 def PodCastDetails(request, pk):
     podcast = get_object_or_404(PodCast, pk=pk)
     podcast.updateIfReq()
-    shows = Show.objects.filter(Podcast = podcast).order_by('-PubDate')
+    if request.user.is_authenticated():
+      shows = Show.objects.all(request.user.id)
+    else:
+      shows = Show.objects.all()
+    shows = shows.filter(Podcast = podcast).order_by('-PubDate')
     context = { 'podcast' : podcast,
                 'shows' : shows,
                 'user': request.user }
+    for s in shows:
+      print s
+      print s.userPosition
+      print s.userDone
     return render(request, 'PodCasts/PodCast.html', context)
  
 @login_required

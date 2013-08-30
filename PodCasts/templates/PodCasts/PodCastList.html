@@ -5,7 +5,7 @@
 {% if new_podcast_list %}
     <div>
     {% for podcast in new_podcast_list %}
-        {% if podcast.isFavorite %}
+        {% if podcast.userFavorited %}
         <div class="item podcast favorite" podcast_id={{podcast.id}} > 
         {% else %}
         <div class="item podcast" podcast_id={{podcast.id}} > 

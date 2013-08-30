@@ -7,6 +7,21 @@ from PodCasts.support.Parsers import RSSParser
 import datetime
 import pytz
 
+class PodCastManager(models.Manager):
+    def all(self, userID = None):
+      if userID:
+          return super(PodCastManager, self).all().extra(
+            select = {'userFavorited': '''
+              EXISTS (
+                SELECT * 
+                FROM PodCasts_favorite
+                WHERE PodCasts_favorite.User_id = %s AND
+                      PodCasts_favorite.Podcast_id = PodCasts_podcast.id)'''},
+            select_params = (userID,))
+      else:
+          return super(PodCastManager, self).all()
+      
+
 # Create your models here.
 class PodCast(models.Model):
     Title = models.CharField(max_length=200)
@@ -16,27 +31,17 @@ class PodCast(models.Model):
     LastRetrived = models.DateTimeField(blank=True,null=True)
     FavoritingUsers = models.ManyToManyField(User, through = 'Favorite')
 
-    _isFavorite = False
-    _user = None
+    objects = PodCastManager()
+
+    _favorited = False
 
     @property
-    def isFavorite(self):
-        if self._user:
-            return Favorite.objects.filter(User = self._user, Podcast = self)
-        else:
-            return False
+    def userFavorited(self):
+      return not not self._favorited
 
-    @isFavorite.setter
-    def isFavorite(self, value):
-        self._isFavorite = value
-    
-    @property
-    def currentUser(self):
-        return self._user
-    
-    @currentUser.setter
-    def currentUser(self, user):
-        self._user = user
+    @userFavorited.setter
+    def userFavorited(self, value):
+      self._favorited = value
 
     def __unicode__(self):
         return self.Title
@@ -78,6 +83,23 @@ class PodCast(models.Model):
         self.LastRetrived = datetime.datetime.now(pytz.utc)
         self.save()
 
+class ShowManager(models.Manager):
+    def all(self, userID = None):
+      if userID:
+          return self.raw('''
+SELECT  PodCasts_show.*, 
+        UserInst.Position as userPosition, 
+        UserInst.Done as userDone
+FROM PodCasts_show
+LEFT JOIN (
+  SELECT *
+  FROM PodCasts_instance
+  WHERE PodCasts_instance.User_id = %s
+) AS UserInsts
+ON PodCasts_show.id = UserInsts.Show_id''', userID)
+      else:
+          return super(ShowManager, self).all()
+      
 class Show(models.Model):
     Podcast = models.ForeignKey(PodCast,related_name = 'shows')
     Title = models.CharField(max_length=200)
@@ -89,27 +111,29 @@ class Show(models.Model):
     Description = models.TextField()
     PubDate = models.DateField(null=True)
 
-    def userInstance(self, request):
-      try:
-        return Instance.objects.get(Show_id = self.id, User_id = request.user.id)
-      except Instance.DoesNotExist as e:
-        return None
+    objects = ShowManager()
 
-    def getUserShows(User_id):
-      return Show.objects.raw('''
-SELECT PodCasts_show.*, UserInsts.Position as userPosition, UserInsts.Done as userDone
-FROM PodCasts_show
-LEFT JOIN (
-  SELECT *
-  FROM PodCasts_instance
-  WHERE PodCasts_instance.User_id = 1
-) AS UserInsts
-ON PodCasts_show.id = UserInsts.Show_id
-          ''')
-      
+    _userPosition = -1
+    _userDone = False
+
+    @property
+    def userPosition(self):
+      return self._userPosition
+
+    @userPosition.setter
+    def userPosition(self, value):
+      self._userPosition = value
+
+    @property
+    def userDone(self):
+      return not not self._userDone
+
+    @userDone.setter
+    def userDone(self, value):
+      self._userDone = value
 
     def __unicode__(self):
-        return self.Title
+        return self.Title + " [" + str(self.id) + "]"
 
 class Favorite(models.Model):
     User = models.ForeignKey(User,related_name='favorites')
