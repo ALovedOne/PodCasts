@@ -41,10 +41,6 @@ def PodCastDetails(request, pk):
     context = { 'podcast' : podcast,
                 'shows' : shows,
                 'user': request.user }
-    for s in shows:
-      print s
-      print s.userPosition
-      print s.userDone
     return render(request, 'PodCasts/PodCast.html', context)
  
 @login_required

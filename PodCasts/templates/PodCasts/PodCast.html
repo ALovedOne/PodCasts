@@ -1,4 +1,5 @@
 {% extends "PodCasts/frame.html" %}
+{% load staticfiles %}
 
 {% block content %}
 <div>
@@ -11,8 +12,14 @@
         </div>
     </div>
     {% for show in shows %}
+    {% if show.userDone %}
+    <div class="item show done" show_id={{show.id}} >
+    {% else %}
     <div class="item show" show_id={{show.id}} >
-      <div class="item-buttons"></div>
+    {% endif %}
+      <div class="item-buttons">
+        <img class="img-icon icon-done" src={% static "PodCasts/done.png" %}></img> 
+      </div>
       <div class="item-content">
         <div class="play-show item-title clickable">{{ show.Title }}</div>
         <div class="item-subtitle">{{ show.PubDate }}</div>

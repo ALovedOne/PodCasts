@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'social_auth',
     'dajaxice',
     'rest_framework',
+    'rest_framework.authtoken',
     'PodCasts',
 )
 
@@ -113,8 +114,6 @@ STATICFILES_FINDERS = (
     'dajaxice.finders.DajaxiceFinder',
 )
 
-PISTON_DISPLAY_ERRORS = True
-
 REST_FRAMEWORK = {
     # Use hyperlinked styles by default.
     # Only used if the `serializer_class` attribute is not set on a view.
@@ -125,7 +124,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': 
       [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-      ]
+      ],
+    'PAGINATE_BY': 15,
+    'PAGINATE_BY_PARAM': 'page_size',
 }
 
 
@@ -151,6 +152,5 @@ AUTHENTICATION_BACKENDS = (
 #    'social_auth.backends.contrib.fedora.FedoraBackend',
 #    'social_auth.backends.OpenIDBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'rest_framework.authentication.TokenAuthentication',
 )
-
-

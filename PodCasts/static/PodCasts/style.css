@@ -49,11 +49,6 @@
 .item-description {
 }
 
-.fav-img {
-  width: 16px;
-  height: 16px;
-}
-
 .item {
   padding-bottom: 5px;
   position: relative;
@@ -66,32 +61,25 @@
 }
 
 .img-icon{
+  width: 16px;
+  height: 16px;
+  display: block;
 }
 
 .img-icon-clickable:hover{
   cursor: pointer;
 }
 
-.icon-fav-blank {
-  width: 16px;
-  height: 16px;
-  display: block;
-}
+/* Favorite Image */
+.icon-fav-blank {   display: block; }
+.favorite .icon-fav-blank { display: none; }
 
-.icon-favorite {
-  width: 16px;
-  height: 16px;
-  display: none;
-}
+.icon-favorite {    display: none;  }
+.favorite .icon-favorite {  display: block;}
 
-.favorite .icon-fav-blank {
-  display: none;
-}
-
-.favorite .icon-favorite {
-  display: block;
-}
-
+/* Done Icon */
+.icon-done { display: none;}
+.done .icon-done { display: block;}
 
 .item-content {
   width: 700px;

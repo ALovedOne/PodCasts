@@ -86,17 +86,21 @@ class PodCast(models.Model):
 class ShowManager(models.Manager):
     def all(self, userID = None):
       if userID:
-          return self.raw('''
-SELECT  PodCasts_show.*, 
-        UserInst.Position as userPosition, 
-        UserInst.Done as userDone
-FROM PodCasts_show
-LEFT JOIN (
-  SELECT *
-  FROM PodCasts_instance
-  WHERE PodCasts_instance.User_id = %s
-) AS UserInsts
-ON PodCasts_show.id = UserInsts.Show_id''', userID)
+          return super(ShowManager, self).all().extra(
+            select = {
+              'userPosition': '''
+                SELECT PodCasts_instance.Position 
+                FROM PodCasts_instance
+                WHERE PodCasts_instance.User_id = %s AND
+                      PodCasts_instance.Show_id = PodCasts_show.id''',
+              'userDone': '''
+                SELECT PodCasts_instance.Done
+                FROM PodCasts_instance
+                WHERE PodCasts_instance.User_id = %s AND
+                      PodCasts_instance.Show_id = PodCasts_show.id''',
+                      'userID':'%s'
+              },
+            select_params = (userID,userID,userID))
       else:
           return super(ShowManager, self).all()
       
@@ -115,6 +119,7 @@ class Show(models.Model):
 
     _userPosition = -1
     _userDone = False
+    _userID = None
 
     @property
     def userPosition(self):
@@ -131,6 +136,26 @@ class Show(models.Model):
     @userDone.setter
     def userDone(self, value):
       self._userDone = value
+
+    @property
+    def userID(self):
+      return self._userID
+
+    @userID.setter
+    def userID(self, value):
+      self._userID = value
+
+    def save(self, *args, **kwargs):
+      super(Show, self).save(*args, **kwargs)
+      if self._userID != None:
+        inst, created = Instance.objects.get_or_create(
+          User_id = self._userID, 
+          Show_id = self.id,
+          PodCast_id = self.Podcast.id)
+        if self._userPosition >= 0:
+          inst.Position = self._userPosition
+        inst.Done = self._userDone
+        inst.save()
 
     def __unicode__(self):
         return self.Title + " [" + str(self.id) + "]"

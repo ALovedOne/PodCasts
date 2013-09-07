@@ -21,5 +21,7 @@ urlpatterns = patterns('',
     url(r'^login/', views.login, name='login'),
     url(r'^logout/',views.logout,name='logout'),
     url(r'^api-auth/',include('rest_framework.urls', namespace='rest_framework')),
+#    url(r'^api/', include('PodCastSite.api.urls')),
+    url(r'^api-token-auth/', 'rest_framework.authtoken.views.obtain_auth_token'),
 )
 
