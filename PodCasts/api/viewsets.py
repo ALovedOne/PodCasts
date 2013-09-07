@@ -1,8 +1,11 @@
 from PodCasts.models import PodCast,Favorite,Show,Instance
 
 from django.contrib.auth.models import User
+from django.conf.urls import patterns, include, url
 
-from rest_framework import viewsets, serializers
+from rest_framework import viewsets, serializers,routers
+from rest_framework.decorators import action, link
+from rest_framework.reverse import reverse
 
 class PodCastSerializer(serializers.ModelSerializer):
   '''
@@ -10,10 +13,14 @@ class PodCastSerializer(serializers.ModelSerializer):
     logged in the field will be false (null or "")
   '''
   userFavorite = serializers.BooleanField(source = 'userFavorited', read_only = True)
+  podcastShows = serializers.SerializerMethodField('getShowsURL')
 
   class Meta:
     model = PodCast
     exclude = ('FavoritingUsers',)
+
+  def getShowsURL(self, podCast):
+    return reverse('show-list', request = self.context['request']) + "?podcast=" + str(podCast.id)
 
 class ShowSerializer(serializers.ModelSerializer):
   '''
@@ -32,25 +39,31 @@ class PodCastViewSet(viewsets.ModelViewSet):
 
   def get_queryset(self, *args):
     if self.request.user.is_authenticated():
-      return PodCast.objects.all(self.request.user.id)
+      qs = PodCast.objects.all(self.request.user.id)
     else:
-      return PodCast.objects.all()
+      qs = PodCast.objects.all()
 
+    if 'favorites' in self.request.QUERY_PARAMS and self.request.user.is_authenticated():
+      qs = qs.filter(FavoritingUsers__id = self.request.user.id)
+
+    return qs
+ 
 class ShowViewSet(viewsets.ModelViewSet):
   model = Show
   serializer_class = ShowSerializer
 
   def get_queryset(self, *args):
-    print dir(self)
     if self.request.user.is_authenticated():
-      return Show.objects.all(self.request.user.id)
+      qs = Show.objects.all(self.request.user.id)
     else:
-      return Show.objects.all()
+      qs = Show.objects.all()
 
-class FavoriteViewSet(viewsets.ModelViewSet):
-  model = PodCast
-  serializer_class = PodCastSerializer
+    if 'podcast' in self.request.QUERY_PARAMS:
+      qs = qs.filter(Podcast_id = self.request.QUERY_PARAMS['podcast'])
 
-  def get_queryset(self):
-    return PodCast.objects.filter(FavoritingUsers__id = self.request.user.id)
+    return qs
 
+router = routers.DefaultRouter()
+router.register(r'podcasts',  PodCastViewSet, base_name = 'podcasts')
+router.register(r'shows',     ShowViewSet)
+urlpatterns = router.urls

@@ -9,5 +9,5 @@ urlpatterns = patterns('',
   url(r'^(?P<pk>\d+)/$', views.PodCastDetails, name='detail'),
   url(r'^create/$',      views.create,         name='create'),
   url(r'^favorite/$',    views.UserFavorites,  name='favorites'),
-  url(r'^api/',          include('PodCasts.api.urls')),
+  url(r'^api/',          include('PodCasts.api.viewsets')),
 )
