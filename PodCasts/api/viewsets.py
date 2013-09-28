@@ -29,9 +29,14 @@ class ShowSerializer(serializers.ModelSerializer):
   '''
   userDone = serializers.BooleanField(source = 'userDone', read_only = True)
   userPosition = serializers.IntegerField(source = 'userPosition', read_only = True)
+  updateURL = serializers.SerializerMethodField('getUpdateURL')
 
   class Meta:
     model = Show
+
+  def getUpdateURL(self, obj):
+    return reverse('show-detail', request = self.context['request'], kwargs = {'pk':obj.id})
+    return "HI"
 
 class PodCastViewSet(viewsets.ModelViewSet):
   model = PodCast
