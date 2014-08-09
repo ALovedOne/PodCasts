@@ -1,0 +1,8 @@
+WSGIScriptAlias /podcastsite /mnt/mirror/mike/PodCasts/apache/django.wsgi
+
+Alias /PodCastCache /mnt/block1/PodCastSite/
+
+<Directory "/mnt/block1/PodCastSite/">
+  Order allow,deny
+  Allow from all
+</Directory>

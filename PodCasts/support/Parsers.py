@@ -63,7 +63,11 @@ class RSSParser (xml.sax.handler.ContentHandler):
     elif Name == "description":
       self.Description = self.Content
     elif Name == "pubdate":
-      self.PubDate = rfc822toDateTime(self.Content)
+      try:
+        self.PubDate = rfc822toDateTime(self.Content)
+      except Exception as e:
+        self.PubDate = datetime.now()
+        print e
     elif Name == "link":
       pass
       #self.Link = self.Content
@@ -121,6 +125,9 @@ class Item(xml.sax.handler.ContentHandler):
     return str(self.__dict__)
 
 def rfc822toDateTime(content):
+  dte = email.utils.parsedate(content)
+  if dte == None:
+    return datetime.datetime.now()
   return datetime.datetime(*email.utils.parsedate(content)[:7])
 
 

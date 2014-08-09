@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'social_auth',
+ #   'social_auth',
     'dajaxice',
     'rest_framework',
     'rest_framework.authtoken',
@@ -86,8 +86,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
-
 STATIC_URL = '/static/'
+
+# Media Files (MP3 Files)
+MEDIA_URL = 'https://from-ring-zero.com/PodCastCache/'
+MEDIA_ROOT = '/mnt/block1/PodCastSite'
 
 
 # Begin Dajaxice
@@ -127,15 +130,20 @@ REST_FRAMEWORK = {
       ],
     'PAGINATE_BY': 15,
     'PAGINATE_BY_PARAM': 'page_size',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+      'rest_framework.authentication.BasicAuthentication',
+      'rest_framework.authentication.SessionAuthentication',
+      'rest_framework.authentication.TokenAuthentication',
+    )
 }
 
 
 AUTHENTICATION_BACKENDS = (
 #    'social_auth.backends.twitter.TwitterBackend',
 #    'social_auth.backends.facebook.FacebookBackend',
-    'social_auth.backends.google.GoogleOAuthBackend',
-    'social_auth.backends.google.GoogleOAuth2Backend',
-    'social_auth.backends.google.GoogleBackend',
+#    'social_auth.backends.google.GoogleOAuthBackend',
+#    'social_auth.backends.google.GoogleOAuth2Backend',
+#    'social_auth.backends.google.GoogleBackend',
 #    'social_auth.backends.yahoo.YahooBackend',
 #    'social_auth.backends.browserid.BrowserIDBackend',
 #    'social_auth.backends.contrib.linkedin.LinkedinBackend',

@@ -4,26 +4,29 @@
 {% block content %}
 <div>
     <div>
-        <img class="title-image" src={{ podcast.ImageLink }} height='90px' width='90px'></img>
-        <div class="inline">
-            <div class="title">{{ podcast.Title }}</div>
-            <div class="informative">Last retrived: {{ podcast.LastRetrived }}</div>
-            <div class="description">{{ podcast.Description }}</div>
-        </div>
+        <img class="title-image" src={{ podcast.ImageLink }}></img>
+		<div class="title-content">
+			<div class="inline">
+				<div class="title">{{ podcast.Title }}</div>
+				<div class="informative">Last retrived: {{ podcast.LastRetrived }}</div>
+				<div class="description">{{ podcast.Description }}</div>
+			</div>
+		</div>
     </div>
     {% for show in shows %}
     {% if show.userDone %}
-    <div class="item show done" show_id={{show.id}} >
+    <div class="item show done" data_show_id={{show.id}} >
     {% else %}
-    <div class="item show" show_id={{show.id}} >
+    <div class="item show" data_show_id={{show.id}} >
     {% endif %}
       <div class="item-buttons">
-        <img class="img-icon icon-done" src={% static "PodCasts/done.png" %}></img> 
+        <img class="img-icon icon-done"       src={% static "PodCasts/done.png" %}></img> 
+        <img class="img-icon icon-done-blank" src={% static "PodCasts/done-blank.png" %}></img>
       </div>
       <div class="item-content">
-        <div class="play-show item-title clickable">{{ show.Title }}</div>
+        <div class="item-title clickable play-show">{{ show.Title }}</div>
         <div class="item-subtitle">{{ show.PubDate }}</div>
-        <div class="item-description">{{ show.Description|safe }}</div>
+        <div class="item-body">{{ show.Description|safe }}</div>
       </div>
     </div>
     {% endfor %}

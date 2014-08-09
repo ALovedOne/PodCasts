@@ -6,9 +6,9 @@
     <div>
     {% for podcast in new_podcast_list %}
         {% if podcast.userFavorited %}
-        <div class="item podcast favorite" podcast_id={{podcast.id}} > 
+        <div class="item podcast favorite" data_podcast_id={{podcast.id}} > 
         {% else %}
-        <div class="item podcast" podcast_id={{podcast.id}} > 
+        <div class="item podcast" data_podcast_id={{podcast.id}} > 
         {% endif %}
             <div class="item-buttons">
               <div class="img-icon-clickable update_favorite">

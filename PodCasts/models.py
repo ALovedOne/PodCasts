@@ -11,13 +11,16 @@ class PodCastManager(models.Manager):
     def all(self, userID = None):
       if userID:
           return super(PodCastManager, self).all().extra(
-            select = {'userFavorited': '''
+            select = {
+            'userFavorited': '''
               EXISTS (
                 SELECT * 
                 FROM PodCasts_favorite
                 WHERE PodCasts_favorite.User_id = %s AND
-                      PodCasts_favorite.Podcast_id = PodCasts_podcast.id)'''},
-            select_params = (userID,))
+                      PodCasts_favorite.Podcast_id = PodCasts_podcast.id)''',
+            'userID':'%s'
+            },
+            select_params = (userID,userID))
       else:
           return super(PodCastManager, self).all()
       
@@ -30,10 +33,12 @@ class PodCast(models.Model):
     Description = models.TextField()
     LastRetrived = models.DateTimeField(blank=True,null=True)
     FavoritingUsers = models.ManyToManyField(User, through = 'Favorite')
+    CoverImage = models.ImageField(upload_to = 'PodCasts.PodCast.CoverImage')
 
     objects = PodCastManager()
 
     _favorited = False
+    _userID = None
 
     @property
     def userFavorited(self):
@@ -52,7 +57,7 @@ class PodCast(models.Model):
         return dateDelta.seconds + dateDelta.days*60*60*24
 
     def updateIfReq(self):
-        if self.timeSinceLastUpdate() > 60*60:
+#        if self.timeSinceLastUpdate() > 60*60:
             self.update()
 
     def update(self, FirstLoad = True):
@@ -80,9 +85,28 @@ class PodCast(models.Model):
                     show.MediaURL = i.MediaURL
                     show.PubDate = i.PubDate
                     show.save()
-        self.LastRetrived = datetime.datetime.now(pytz.utc)
+        self.LastRetrived = datetime.datetime.now(pytz.utc).replace(microsecond = 0)
         self.save()
 
+    def getImageFileName(self):
+        return "PodCasts.PodCast.CoverImage/%d" % (self.id,)
+
+    @property
+    def userID(self):
+      return self._userID
+
+    @userID.setter
+    def userID(self, value):
+      self._userID = value
+
+    def save(self, *args, **kwargs):
+      super(PodCast, self).save(*args, **kwargs)
+      if self._userID != None:
+        favorite, created = Favorite.objects.get_or_create(
+          User_id = self._userID, 
+          Podcast_id = self.id)
+        favorite.save()
+	
 class ShowManager(models.Manager):
     def all(self, userID = None):
       if userID:
@@ -98,7 +122,7 @@ class ShowManager(models.Manager):
                 FROM PodCasts_instance
                 WHERE PodCasts_instance.User_id = %s AND
                       PodCasts_instance.Show_id = PodCasts_show.id''',
-                      'userID':'%s'
+              'userID':'%s'
               },
             select_params = (userID,userID,userID))
       else:
@@ -114,6 +138,8 @@ class Show(models.Model):
     MediaType = models.CharField(max_length=32)
     Description = models.TextField()
     PubDate = models.DateField(null=True)
+    AudioFile = models.FileField(upload_to = 'PodCasts.Show.AudioFile')
+    Duration = models.IntegerField(default=0)
 
     objects = ShowManager()
 
@@ -144,6 +170,11 @@ class Show(models.Model):
     @userID.setter
     def userID(self, value):
       self._userID = value
+      
+    def getAudioFileName(self):
+      name = "PodCasts.Show.AudioFile/%d/%d.mp3" % (self.Podcast_id, self.id)
+      self.AudioFile.name = name
+      return name
 
     def save(self, *args, **kwargs):
       super(Show, self).save(*args, **kwargs)
@@ -156,7 +187,7 @@ class Show(models.Model):
           inst.Position = self._userPosition
         inst.Done = self._userDone
         inst.save()
-
+	
     def __unicode__(self):
         return self.Title + " [" + str(self.id) + "]"
 

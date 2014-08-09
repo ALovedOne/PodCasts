@@ -9,7 +9,7 @@ com.frz.podcast.get_item = function(div, item_name) {
 
 com.frz.podcast.item_id = function(div, item_name) {
   item = com.frz.podcast.get_item(div, item_name);
-  return item[0].getAttribute(item_name + "_id");
+  return item[0].getAttribute("data_" + item_name + "_id");
 }
 
 com.frz.podcast.play = function(evnt) {
@@ -19,7 +19,6 @@ com.frz.podcast.play = function(evnt) {
   Dajaxice.PodCasts.loadInstance(function(data) {
     var audio = $("#audio-element")[0];
     audio.src = data['url'];
-    audio.startTime = 60;
     com.frz.podcast.vars.inst_id = data['inst_id'];
 
     audio.addEventListener('canplaythrough', function() {
@@ -49,7 +48,17 @@ com.frz.podcast.podcast_update = function() {
 }
 
 com.frz.podcast.podcast_done = function() {
+  var args = {};
 
+  clearInterval(com.frz.podcast.vars.interval);
+  com.frz.podcast.vars.internal = 0;
+
+  args['inst_id'] = com.frz.podcast.vars.inst_id;
+  args['done'] = true;
+
+  Dajaxice.PodCasts.markComplete(function(data) {
+
+  }, args)
 }
 
 com.frz.podcast.update_favorite = function(evnt){
